@@ -1,1 +1,52 @@
-Pim -
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>PIM POC</title>
+    <script src="http://ajax.aspnetcdn.com/ajax/jquery/jquery-1.8.0.min.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <div style="margin-left: auto; margin-right: auto; width: 800px;">
+    	<h1>PIM POC</h1>
+	    <p>Post JSON to /calculatepim as {'json': {'pim": ... }}</p>
+	    <textarea id="tbxJson" style="width: 500px; height: 200px;"></textarea>
+	    <p><a href="javascript:CalculatePim2();">Calculate Pim2</a> <a href="javascript:SampleData();">Sample Data</a></p>
+	    <div id="pnlSuccess">
+	    	<p>pim score: <b><span id="pnlScore"></span></b></p>
+	    	<p>probability of death: <b><span id="pnlProbDeath"></span>%</b></p>
+    	</div>
+    	<div id="pnlError" style="display: none;">
+    		<p>status code: <b><span id="pnlErrorCode"></span> - <span id="pnlErrorCodeText"></span></b></p>
+			<p>error message: <b><span id="pnlErrorMessage"></span></b></p>
+		</div>
+	</div>
+    <script type="text/javascript">
+    function CalculatePim2(){
+		$.ajax({
+			url: "http://quiet-fortress-1492.herokuapp.com/pim",
+			type:"POST",
+			data: $("#tbxJson").val(),
+			contentType:"application/json; charset=utf-8",
+			dataType:"json",
+			success: function(res){
+				console.log(res);
+				$("#pnlScore").html(res.score);
+				$("#pnlProbDeath").html(res.prob_death);
+				$("#pnlSuccess").show();
+				$("#pnlError").hide();	  
+			},
+			error: function(obj, status, error){
+				console.log(obj);
+				$("#pnlErrorCode").html(obj.status);
+				$("#pnlErrorCodeText").html(obj.statusText);
+				$("#pnlErrorMessage").html(obj.responseText);
+				$("#pnlSuccess").hide();
+				$("#pnlError").show();
+			}
+		});
+    }
+    function SampleData(){
+      $("#tbxJson").val('{ "systolic_bp": 10, "pao2": 5.0, "fio2": 0.20, "base_excess": 10.0, "pupillary_reaction": 1, "mechanical_vent_first": false, "elective_icu_admission": false, "recovery_reason_admission": false, "following_cardiac_bypass": false, "high_risk_dx": false, "low_risk_dx": false }');
+    }
+    </script>
+  </body>
+</html>
